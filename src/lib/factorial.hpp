@@ -14,7 +14,7 @@ public:
       fact[i] = fact[i - 1] * i;
     }
   }
-  
+
   uint64_t operator[](size_t k){return fact[k];};
 };
 #endif

@@ -5,6 +5,7 @@
 #include <bitset>
 #include <unistd.h>
 #include "./simple_function.hpp"
+#include "./two_layer_NN.hpp"
 #include "./factorial.hpp"
 
 template<typename T> // f: 2^P -> T
@@ -37,12 +38,14 @@ public:
         add *= fact[size_delta];
         add *= fact[n - size_S - size_delta];
         add /= fact[n];
-        T mul = simple_function(S | delta) - simple_function(S);
+        // T mul = simple_function(S | delta) - simple_function(S);
+        T mul = two_layer_nn(S | delta, n, K) - two_layer_nn(S, n, K);
         add *= mul;
         sum += add;
         if(S == 0) break;
       }
-      std::cerr << "phi[ " << delta << " ] = " << sum << std::endl;
+
+      // std::cerr << "phi[ " << delta << " ] = " << sum << std::endl;
       phi[delta] = sum;
     }
   };
@@ -60,14 +63,14 @@ public:
     // phi[delta] = sub1[delta] - sub2[delta]; 線型性より
     for(uint64_t delta = 0; delta < (1 << n); delta++) {
       phi[delta] = sub1[delta] - sub2[delta];
-      std::cerr << "phi[ " << delta << " ] = " << phi[delta] << std::endl;
+      // std::cerr << "phi[ " << delta << " ] = " << phi[delta] << std::endl;
     }
   };
 
   void culc_sub1() {
     auto g = [&](uint64_t bit) {
       uint32_t size_bit = __builtin_popcount(bit);
-      T ret = simple_function(bit);
+      T ret = two_layer_nn(bit, n, K);
       ret *= fact[n - size_bit];
       ret /= fact[n];
       return ret;
@@ -122,7 +125,7 @@ public:
         add *= fact[size_delta];
         add *= fact[n - size_S - size_delta];
         add /= fact[n];
-        T mul = simple_function(S | delta);
+        T mul = two_layer_nn(S | delta, n, K);
         add *= mul;
         sum += add;
         if(S == 0) break;
@@ -142,7 +145,7 @@ public:
   void culc_sub2() {
     auto g = [&](uint64_t bit) {
       uint32_t size_bit = __builtin_popcount(bit);
-      T ret = simple_function(bit);
+      T ret = two_layer_nn(bit, n, K);
       ret *= fact[size_bit];
       ret /= fact[n];
       return ret;
@@ -201,7 +204,7 @@ public:
         add *= fact[size_delta];
         add *= fact[n - size_S - size_delta];
         add /= fact[n];
-        T mul = simple_function(S);
+        T mul = two_layer_nn(S, n, K);
         add *= mul;
         sum += add;
         if(S == 0) break;

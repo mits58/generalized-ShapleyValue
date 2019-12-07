@@ -32,6 +32,7 @@ public:
   int32 next_int(int32 a, int32 b);      // [a, b]
 
   double next_double();                  // [0, 1)
+  double next_double(double a, double b);// [a, b)
   double next_double_by_exponential(double mean);
   double next_double_by_power_law(double eps, double median);
 
@@ -91,6 +92,11 @@ int32 random_number::next_int(int32 a, int32 b) {
 double random_number::next_double() {
   int32 p = next_int();
   return 1.0 * p / std::numeric_limits<int32>::max();
+}
+
+double random_number::next_double(double a, double b) {
+  assert(b >= a);
+  return b + next_double() * (b - a);
 }
 
 double random_number::next_double_by_exponential(double mean) {
