@@ -28,6 +28,9 @@ public:
   void naive() {
     std::cout << "naive" << std::endl;
     for(uint64_t delta = 0; delta < (1 << n); delta++) {
+      if(delta % 100 == 0) {
+        std::cout << delta << "/" << (1 << n) << std::endl;
+      }
       int64_t M = P & ~delta;           // M = P / delta
       T sum = 0;
       for(int S = M; S >= 0; S = (S - 1) & M){
@@ -54,13 +57,15 @@ public:
     std::cout << "fast" << std::endl;
     sub1.resize(1 << n);
     sub2.resize(1 << n);
-    
+    std::cout << "caluculating sub1 ... " << std::endl;
     culc_sub1();
-    culc_sub1_naive();
+
+    std::cout << "caluculating sub2 ... " << std::endl;
     culc_sub2();
-    culc_sub2_naive();
 
     // phi[delta] = sub1[delta] - sub2[delta]; 線型性より
+    
+    std::cout << "caluculating phi ... " << std::endl;
     for(uint64_t delta = 0; delta < (1 << n); delta++) {
       phi[delta] = sub1[delta] - sub2[delta];
       // std::cerr << "phi[ " << delta << " ] = " << phi[delta] << std::endl;
